@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Niranjana Raja | Cosmic CSE Portfolio</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #020308;
+      --accent-cyan: #22d3ee;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-deep);
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    #cosmos-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glass-card {
+      background: rgba(10, 14, 29, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(34, 211, 238, 0.45);
+      box-shadow: 0 12px 40px -8px rgba(34, 211, 238, 0.22), 0 0 20px -5px rgba(168, 85, 247, 0.25);
+      transform: translateY(-4px);
+    }
+    .neon-badge {
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.14), rgba(168, 85, 247, 0.14));
+      border: 1px solid rgba(34, 211, 238, 0.35);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #67e8f9 0%, #c084fc 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Peeking Aliens */
+    .alien-container {
+      position: fixed;
+      z-index: 40;
+      cursor: pointer;
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+      user-select: none;
+      filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.5));
+    }
+    .alien-container:hover {
+      filter: drop-shadow(0 0 18px rgba(34, 211, 238, 0.9));
+    }
+    /* Edge positions */
+    .alien-left {
+      left: -80px;
+      top: 28%;
+      transform: rotate(35deg);
+    }
+    .alien-left.peeking {
+      left: -14px;
+    }
+    .alien-right {
+      right: -80px;
+      top: 62%;
+      transform: rotate(-35deg);
+    }
+    .alien-right.peeking {
+      right: -14px;
+    }
+    .alien-bottom {
+      bottom: -80px;
+      left: 18%;
+      transform: rotate(0deg);
+    }
+    .alien-bottom.peeking {
+      bottom: -12px;
+    }
+    .alien-top-right {
+      top: -80px;
+      right: 22%;
+      transform: rotate(180deg);
+    }
+    .alien-top-right.peeking {
+      top: 56px;
+    }
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .float-anim {
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.06); }
+    }
+    .glow-ring {
+      animation: pulseGlow 3.5s ease-in-out infinite;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #030712;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- Interactive Starfield & Galaxy Canvas -->
+  <canvas id="cosmos-canvas"></canvas>
+
+  <!-- Peeking Interactive Aliens -->
+  <div id="alien-1" class="alien-container alien-left" title="Click me! I'm Zorp, the AI Scout!">
+    <div class="relative group">
+      <div id="alien-bubble-1" class="hidden absolute left-16 -top-8 bg-slate-900/95 text-cyan-300 text-xs font-medium px-3 py-1.5 rounded-xl border border-cyan-500/40 whitespace-nowrap shadow-lg">
+        Beep boop! Scrolling forms the galaxy! 🛸
+      </div>
+      <svg width="68" height="68" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Antenna -->
+        <line x1="50" y1="18" x2="50" y2="6" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="5" r="5" fill="#22d3ee"/>
+        <!-- Head -->
+        <ellipse cx="50" cy="52" rx="32" ry="36" fill="url(#alienGrad1)" stroke="#22c55e" stroke-width="2"/>
+        <!-- Eyes -->
+        <ellipse cx="37" cy="48" rx="9" ry="13" transform="rotate(-12 37 48)" fill="#020617"/>
+        <ellipse cx="63" cy="48" rx="9" ry="13" transform="rotate(12 63 48)" fill="#020617"/>
+        <circle cx="39" cy="44" r="3" fill="#ffffff"/>
+        <circle cx="65" cy="44" r="3" fill="#ffffff"/>
+        <!-- Cute smile -->
+        <path d="M43 68 Q50 73 57 68" stroke="#064e3b" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <!-- Little hand waving -->
+        <circle cx="84" cy="58" r="7" fill="#4ade80"/>
+        <defs>
+          <linearGradient id="alienGrad1" x1="20" y1="20" x2="80" y2="85" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#86efac"/>
+            <stop offset="1" stop-color="#22c55e"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <div id="alien-2" class="alien-container alien-right" title="Click me! I'm Nebuli, the Encryption Guardian!">
+    <div class="relative group">
+      <div id="alien-bubble-2" class="hidden absolute right-16 -top-8 bg-slate-900/95 text-purple-300 text-xs font-medium px-3 py-1.5 rounded-xl border border-purple-500/40 whitespace-nowrap shadow-lg">
+        EduCrypt keeps our cosmic transmissions safe! 🔐
+      </div>
+      <svg width="66" height="66" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Double Antennae -->
+        <line x1="36" y1="22" x2="26" y2="8" stroke="#c084fc" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="25" cy="7" r="5" fill="#f472b6"/>
+        <line x1="64" y1="22" x2="74" y2="8" stroke="#c084fc" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="75" cy="7" r="5" fill="#f472b6"/>
+        <!-- Head -->
+        <ellipse cx="50" cy="54" rx="33" ry="34" fill="url(#alienGrad2)" stroke="#a855f7" stroke-width="2"/>
+        <!-- 3 Eyes -->
+        <circle cx="34" cy="48" r="7" fill="#090d16"/>
+        <circle cx="50" cy="40" r="7" fill="#090d16"/>
+        <circle cx="66" cy="48" r="7" fill="#090d16"/>
+        <circle cx="36" cy="46" r="2.2" fill="#38bdf8"/>
+        <circle cx="52" cy="38" r="2.2" fill="#38bdf8"/>
+        <circle cx="68" cy="46" r="2.2" fill="#38bdf8"/>
+        <!-- Smile -->
+        <path d="M42 66 Q50 72 58 66" stroke="#3b0764" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <defs>
+          <linearGradient id="alienGrad2" x1="20" y1="20" x2="80" y2="85" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#d8b4fe"/>
+            <stop offset="1" stop-color="#9333ea"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <div id="alien-3" class="alien-container alien-bottom" title="Click me! I'm Quasar, the P2P Signal Booster!">
+    <div class="relative group">
+      <div id="alien-bubble-3" class="hidden absolute left-10 -top-12 bg-slate-900/95 text-emerald-300 text-xs font-medium px-3 py-1.5 rounded-xl border border-emerald-500/40 whitespace-nowrap shadow-lg">
+        No cell signal? P2P mesh to the rescue! 📡
+      </div>
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="50" y1="20" x2="50" y2="6" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="5" r="5" fill="#fde047"/>
+        <ellipse cx="50" cy="55" rx="34" ry="30" fill="url(#alienGrad3)" stroke="#0ea5e9" stroke-width="2"/>
+        <ellipse cx="38" cy="50" rx="8" ry="11" fill="#020617"/>
+        <ellipse cx="62" cy="50" rx="8" ry="11" fill="#020617"/>
+        <circle cx="40" cy="47" r="2.8" fill="#ffffff"/>
+        <circle cx="64" cy="47" r="2.8" fill="#ffffff"/>
+        <circle cx="50" cy="67" r="4" fill="#0c4a6e"/>
+        <defs>
+          <linearGradient id="alienGrad3" x1="20" y1="25" x2="80" y2="85" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7dd3fc"/>
+            <stop offset="1" stop-color="#0284c7"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Top Navigation & Cosmic Telemetry Bar -->
+  <header class="fixed top-0 left-0 right-0 z-30 bg-slate-950/75 backdrop-blur-md border-b border-slate-800/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="#hero" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 p-0.5">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-display font-bold text-cyan-300 group-hover:text-white transition">
+            NR
+          </div>
+        </div>
+        <div>
+          <span class="font-display font-bold text-base tracking-tight text-white">Niranjana Raja</span>
+          <span class="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">VIT Vellore • CSE</span>
+        </div>
+      </a>
+
+      <!-- Nav Links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="#about" class="hover:text-cyan-300 transition">About Me</a>
+        <a href="#accomplishments" class="hover:text-cyan-300 transition">Accomplishments</a>
+        <a href="#future" class="hover:text-cyan-300 transition">Future Horizon</a>
+        <a href="#contact" class="hover:text-cyan-300 transition">Contact</a>
+      </nav>
+
+      <!-- Interactive Alien Radar & Galaxy Formation HUD -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-700/70 rounded-full px-3 py-1 text-xs">
+          <span class="text-purple-400">🌌 Galaxy:</span>
+          <span id="galaxy-pct" class="font-mono font-bold text-cyan-300">5%</span>
+        </div>
+        <button id="summon-alien-btn" type="button" class="flex items-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 rounded-full px-3 py-1 text-xs font-medium transition active:scale-95" title="Summon a peeking alien!">
+          <span>👽</span>
+          <span class="hidden sm:inline">Aliens Found:</span>
+          <span id="alien-score" class="font-mono font-bold">0</span>
+        </button>
+      </div>
+    </div>
+    <!-- Galaxy Formation Progress Line -->
+    <div class="w-full h-0.5 bg-slate-900 overflow-hidden">
+      <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 transition-all duration-150" style="width: 2%;"></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-24 space-y-28 sm:space-y-36">
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="min-h-[78vh] flex flex-col items-center lg:items-start justify-center pt-4">
+      <div class="w-full max-w-3xl space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full neon-badge text-xs sm:text-sm text-cyan-200 font-medium">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+          <span>Scroll down to ignite the stars & form a spiral galaxy ✨</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-tight">
+          Hi, I'm <span class="gradient-text">Niranjana Raja</span>
+        </h1>
+
+        <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+          First-Year <span class="text-white font-semibold">Computer Science & Engineering</span> Student at <span class="text-cyan-300 font-semibold">VIT Vellore</span>. Exploring the cosmos of software engineering, cryptography, resilient communication systems, and AI/ML.
+        </p>
+
+        <!-- Interactive Quick Action Buttons -->
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2">
+          <a href="#accomplishments" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-semibold text-sm shadow-lg shadow-cyan-500/20 transition transform hover:-translate-y-0.5">
+            Explore My Missions 🚀
+          </a>
+          <a href="https://www.linkedin.com/in/niranjana-raja-262920422" target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-xl glass-card text-slate-200 hover:text-cyan-300 font-medium text-sm flex items-center gap-2">
+            <svg class="w-4 h-4 fill-current text-cyan-400" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+            <span>LinkedIn Profile</span>
+          </a>
+          <button id="warp-speed-btn" type="button" class="px-4 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-purple-500/30 text-purple-300 text-sm font-medium transition flex items-center gap-1.5">
+            <span>☄️</span>
+            <span>Trigger Meteor Shower</span>
+          </button>
+        </div>
+
+        <!-- Cosmic Status Metrics -->
+        <div class="grid grid-cols-3 gap-3 pt-4 max-w-lg mx-auto lg:mx-0">
+          <div class="glass-card rounded-xl p-3 text-center">
+            <div class="text-xs text-slate-400">Home Base</div>
+            <div class="text-sm sm:text-base font-bold text-white mt-0.5">VIT Vellore</div>
+          </div>
+          <div class="glass-card rounded-xl p-3 text-center">
+            <div class="text-xs text-slate-400">Discipline</div>
+            <div class="text-sm sm:text-base font-bold text-cyan-300 mt-0.5">B.Tech CSE ('29)</div>
+          </div>
+          <div class="glass-card rounded-xl p-3 text-center">
+            <div class="text-xs text-slate-400">Next Frontier</div>
+            <div class="text-sm sm:text-base font-bold text-purple-300 mt-0.5">AI & ML</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT ME SECTION -->
+    <section id="about" class="scroll-mt-24">
+      <div class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-cyan-400">01 // Commander Profile</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">About Me</h2>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/30">
+            First-Year CSE @ VIT Vellore
+          </span>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+          <div class="lg:col-span-2 space-y-4 text-slate-200 leading-relaxed text-base sm:text-lg">
+            <p>
+              Hello! I'm <span class="text-white font-semibold">Niranjana Raja</span>, a first-year Computer Science and Engineering (CSE) undergraduate at <span class="text-cyan-300 font-semibold">Vellore Institute of Technology (VIT), Vellore</span>. From crafting custom encryption tools in high school to building emergency peer-to-peer communication systems at hackathons, I've always loved turning curiosity into real, working software.
+            </p>
+            <p>
+              Stepping into my journey at VIT Vellore, I am super excited and looking forward to building impactful, hands-on projects that solve real-world problems. Whether it's securing digital information, connecting devices when networks fail, or uncovering patterns with data science, I thrive on learning by building and collaborating with fellow innovators.
+            </p>
+          </div>
+
+          <!-- Interactive Starlight Console -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-slate-400">COSMIC ENVIRONMENT TUNER</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            </div>
+            <p class="text-xs text-slate-400">
+              As you scroll down, stars multiply and spiral into a galaxy. You can also customize the galaxy colors right here:
+            </p>
+            <div class="grid grid-cols-3 gap-2 pt-1">
+              <button type="button" data-theme="andromeda" class="galaxy-theme-btn px-2.5 py-2 rounded-lg text-xs font-medium bg-cyan-500/20 border border-cyan-400 text-cyan-200 transition">
+                Andromeda
+              </button>
+              <button type="button" data-theme="supernova" class="galaxy-theme-btn px-2.5 py-2 rounded-lg text-xs font-medium bg-slate-900 border border-slate-700 text-slate-300 hover:border-pink-400 transition">
+                Supernova
+              </button>
+              <button type="button" data-theme="aurora" class="galaxy-theme-btn px-2.5 py-2 rounded-lg text-xs font-medium bg-slate-900 border border-slate-700 text-slate-300 hover:border-emerald-400 transition">
+                Aurora
+              </button>
+            </div>
+            <div class="pt-1">
+              <label for="star-density-slider" class="flex justify-between text-xs text-slate-400 mb-1">
+                <span>Starfield Boost</span>
+                <span id="star-boost-val" class="text-cyan-300 font-mono">1.0x</span>
+              </label>
+              <input id="star-density-slider" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-cyan-400 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCOMPLISHMENTS SECTION -->
+    <section id="accomplishments" class="scroll-mt-24 space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-cyan-400">02 // Mission Log</span>
+          <h2 class="text-2xl sm:text-4xl font-bold text-white mt-1">Accomplished Tasks & Projects</h2>
+          <p class="text-slate-400 text-sm sm:text-base mt-1">Click on any mission card to inspect technical highlights or test its interactive demo.</p>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="flex flex-wrap gap-2">
+          <button type="button" data-filter="all" class="mission-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-cyan-500 text-slate-950 transition">
+            All Missions (3)
+          </button>
+          <button type="button" data-filter="ai" class="mission-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-cyan-400 transition">
+            Data Science & AI
+          </button>
+          <button type="button" data-filter="security" class="mission-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-cyan-400 transition">
+            Cryptography
+          </button>
+          <button type="button" data-filter="systems" class="mission-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-cyan-400 transition">
+            Hackathon & P2P
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Accomplishment Cards -->
+      <div id="missions-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Accomplishment 1: IIT Madras Certificate -->
+        <article data-category="ai" class="mission-card glass-card rounded-2xl p-6 flex flex-col justify-between relative group">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="w-11 h-11 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">
+                🎓
+              </span>
+              <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                IIT Madras
+              </span>
+            </div>
+            <h3 class="text-xl font-bold text-white group-hover:text-cyan-300 transition">
+              Data Science & AI Certificate
+            </h3>
+            <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+              Earned a certificate in <span class="text-white font-medium">Data Science and Artificial Intelligence</span> from <span class="text-cyan-300 font-medium">IIT Madras</span>, building a strong analytical foundation in data processing, machine learning concepts, and intelligent problem-solving.
+            </p>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Data Science</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Artificial Intelligence</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">IIT Madras</span>
+            </div>
+            <button type="button" data-modal="modal-iitm" class="open-modal-btn w-full py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+              <span>Inspect Credential & Takeaways</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Accomplishment 2: EduCrypt -->
+        <article data-category="security" class="mission-card glass-card rounded-2xl p-6 flex flex-col justify-between relative group">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="w-11 h-11 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-2xl">
+                🔐
+              </span>
+              <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                12th Grade Project
+              </span>
+            </div>
+            <h3 class="text-xl font-bold text-white group-hover:text-purple-300 transition">
+              EduCrypt: Text & Image Encryption
+            </h3>
+            <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+              Created <span class="text-white font-medium">'EduCrypt'</span> in 12th grade—a dedicated encryption software capable of securing both <span class="text-purple-300 font-medium">text messages and image files</span> to protect sensitive data from unauthorized access.
+            </p>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Cryptography</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Text & Image Security</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Software Dev</span>
+            </div>
+            <button type="button" data-modal="modal-educrypt" class="open-modal-btn w-full py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+              <span>Try Interactive EduCrypt Simulator</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Accomplishment 3: Code2Create Hackathon P2P System -->
+        <article data-category="systems" class="mission-card glass-card rounded-2xl p-6 flex flex-col justify-between relative group">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="w-11 h-11 rounded-xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center text-2xl">
+                📡
+              </span>
+              <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-pink-500/10 text-pink-300 border border-pink-500/20">
+                Code2Create Hackathon
+              </span>
+            </div>
+            <h3 class="text-xl font-bold text-white group-hover:text-pink-300 transition">
+              Emergency P2P Mobile Comm System
+            </h3>
+            <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+              Built a <span class="text-white font-medium">peer-to-peer communication system between mobile phones</span> during the <span class="text-pink-300 font-medium">Code2Create Hackathon</span>, enabling emergency contact and SOS messaging during natural calamities when cellular signals are down.
+            </p>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Peer-to-Peer (P2P)</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Disaster Response</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Mobile Networking</span>
+            </div>
+            <button type="button" data-modal="modal-p2p" class="open-modal-btn w-full py-2.5 rounded-xl bg-pink-500/15 hover:bg-pink-500/25 border border-pink-500/30 text-pink-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+              <span>Test P2P Emergency Mesh Demo</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- FUTURE PLANS / MOVING FORWARD SECTION -->
+    <section id="future" class="scroll-mt-24">
+      <div class="glass-card rounded-3xl p-6 sm:p-10 border border-purple-500/30 relative overflow-hidden">
+        <div class="max-w-3xl">
+          <span class="text-xs font-mono uppercase tracking-widest text-purple-400">03 // Next Trajectory</span>
+          <h2 class="text-2xl sm:text-4xl font-bold text-white mt-1">Moving Forward: Deepening My AI & ML Journey</h2>
+          <p class="text-slate-300 mt-3 text-base sm:text-lg leading-relaxed">
+            As the galaxy in the background forms into full view, so does my roadmap ahead. Building upon my Data Science & AI certification from IIT Madras and my passion for practical software engineering at VIT Vellore, my primary goal moving forward is to <span class="text-cyan-300 font-semibold">become deeply proficient in Artificial Intelligence and Machine Learning</span> and pursue impactful research, internships, and project opportunities in the AI/ML space.
+          </p>
+        </div>
+
+        <!-- Interactive Roadmap Tabs -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="bg-slate-950/75 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-5 transition">
+            <div class="text-xs font-mono text-cyan-400">PHASE 01 // CORE MASTERY</div>
+            <h3 class="text-lg font-bold text-white mt-1">Deepening AI/ML Proficiency</h3>
+            <p class="text-sm text-slate-300 mt-2">
+              Mastering machine learning algorithms, neural networks, and modern AI workflows while strengthening core CSE fundamentals at VIT Vellore.
+            </p>
+          </div>
+
+          <div class="bg-slate-950/75 border border-slate-800 hover:border-purple-500/40 rounded-2xl p-5 transition">
+            <div class="text-xs font-mono text-purple-400">PHASE 02 // REAL-WORLD BUILDS</div>
+            <h3 class="text-lg font-bold text-white mt-1">Intelligent Project Creation</h3>
+            <p class="text-sm text-slate-300 mt-2">
+              Combining AI/ML with areas like security and resilient systems—building smart applications that make a tangible difference for users.
+            </p>
+          </div>
+
+          <div class="bg-slate-950/75 border border-slate-800 hover:border-pink-500/40 rounded-2xl p-5 transition">
+            <div class="text-xs font-mono text-pink-400">PHASE 03 // OPPORTUNITIES</div>
+            <h3 class="text-lg font-bold text-white mt-1">AI/ML Collaborations & Roles</h3>
+            <p class="text-sm text-slate-300 mt-2">
+              Pursuing hackathons, research groups, open-source contributions, and internship opportunities in Artificial Intelligence and Machine Learning.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT & LINKEDIN SECTION -->
+    <section id="contact" class="scroll-mt-24">
+      <div class="glass-card rounded-3xl p-6 sm:p-10 border border-cyan-500/30">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-5">
+            <span class="text-xs font-mono uppercase tracking-widest text-cyan-400">04 // Subspace Transmission</span>
+            <h2 class="text-2xl sm:text-4xl font-bold text-white">Let's Connect Across the Cosmos</h2>
+            <p class="text-slate-300 text-base leading-relaxed">
+              Whether you want to collaborate on an AI/ML project, team up for an upcoming hackathon, or chat about computer science at VIT Vellore, my inbox and LinkedIn are always open!
+            </p>
+
+            <!-- Direct Contact Cards -->
+            <div class="space-y-3 pt-2">
+              <!-- Email Card -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/85 border border-slate-800 rounded-2xl p-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-300">
+                    ✉️
+                  </div>
+                  <div>
+                    <div class="text-xs text-slate-400">Email Address</div>
+                    <a href="mailto:niranjanaraja2008@gmail.com" class="text-sm sm:text-base font-semibold text-white hover:text-cyan-300 transition break-all">
+                      niranjanaraja2008@gmail.com
+                    </a>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="copy-email-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-cyan-300 transition">
+                    Copy Email
+                  </button>
+                  <a href="mailto:niranjanaraja2008@gmail.com" class="px-3.5 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-xs font-semibold text-cyan-200 transition">
+                    Send Email
+                  </a>
+                </div>
+              </div>
+
+              <!-- LinkedIn Card -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/85 border border-slate-800 rounded-2xl p-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-300">
+                    🔗
+                  </div>
+                  <div>
+                    <div class="text-xs text-slate-400">LinkedIn Network</div>
+                    <a href="https://www.linkedin.com/in/niranjana-raja-262920422" target="_blank" rel="noopener noreferrer" class="text-sm sm:text-base font-semibold text-white hover:text-purple-300 transition break-all">
+                      linkedin.com/in/niranjana-raja-262920422
+                    </a>
+                  </div>
+                </div>
+                <a href="https://www.linkedin.com/in/niranjana-raja-262920422" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-xs font-semibold text-white text-center transition">
+                  Visit LinkedIn ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Message Transmitter Form (Netlify-compatible) -->
+          <div class="lg:col-span-5 bg-slate-950/85 border border-slate-800 rounded-2xl p-6">
+            <h3 class="text-lg font-bold text-white mb-1">Send a Quick Transmission</h3>
+            <p class="text-xs text-slate-400 mb-4">Pre-fills a direct message or saves to your mission log.</p>
+            <form id="contact-form" name="portfolio-contact" method="POST" data-netlify="true" class="space-y-3.5">
+              <div>
+                <label for="sender-name" class="block text-xs text-slate-300 mb-1">Your Name</label>
+                <input id="sender-name" name="name" type="text" required placeholder="Alex Rivera" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div>
+                <label for="sender-email" class="block text-xs text-slate-300 mb-1">Your Email</label>
+                <input id="sender-email" name="email" type="email" required placeholder="alex@example.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div>
+                <label for="sender-msg" class="block text-xs text-slate-300 mb-1">Message</label>
+                <textarea id="sender-msg" name="message" rows="3" required placeholder="Hi Niranjana! Would love to connect about an AI/ML project..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400"></textarea>
+              </div>
+              <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-semibold text-sm transition shadow-lg shadow-cyan-500/20">
+                Launch Transmission 🚀
+              </button>
+              <div id="form-feedback" class="hidden text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 text-center"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-slate-800/80 bg-slate-950/80 py-8 text-center text-xs text-slate-400">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        © 2026 <span class="text-white font-semibold">Niranjana Raja</span> • First-Year CSE @ VIT Vellore
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="mailto:niranjanaraja2008@gmail.com" class="hover:text-cyan-300 transition">niranjanaraja2008@gmail.com</a>
+        <span>•</span>
+        <a href="https://www.linkedin.com/in/niranjana-raja-262920422" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-300 transition">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- INTERACTIVE MISSION MODALS -->
+  <!-- Modal Backdrop -->
+  <div id="modal-backdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
+
+    <!-- Modal 1: IIT Madras Certificate -->
+    <div id="modal-iitm" class="mission-modal hidden glass-card max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-cyan-500/40 relative">
+      <button type="button" class="close-modal-btn absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+      <span class="text-xs font-mono text-cyan-400">CREDENTIAL SPOTLIGHT // IIT MADRAS</span>
+      <h3 class="text-2xl font-bold text-white mt-1">Certificate in Data Science & AI</h3>
+      <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+        Earned from the prestigious <span class="text-white font-semibold">Indian Institute of Technology (IIT) Madras</span>, this certification sparked my curiosity for intelligent systems and data-driven engineering.
+      </p>
+      <div class="mt-4 bg-slate-950/90 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs text-slate-300">
+        <div class="font-semibold text-cyan-300">Key Focus Areas Explored:</div>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Foundations of Data Science & Exploratory Data Analysis</li>
+          <li>Core Artificial Intelligence concepts & predictive modeling</li>
+          <li>Bridging mathematical logic with real-world datasets</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Modal 2: EduCrypt Interactive Simulator -->
+    <div id="modal-educrypt" class="mission-modal hidden glass-card max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-purple-500/40 relative">
+      <button type="button" class="close-modal-btn absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+      <span class="text-xs font-mono text-purple-400">12TH GRADE CAPSTONE // INTERACTIVE DEMO</span>
+      <h3 class="text-2xl font-bold text-white mt-1">EduCrypt: Text & Image Encryption</h3>
+      <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+        Built in 12th grade, <span class="text-white font-semibold">EduCrypt</span> encrypts both text and visual image data so confidential files stay unreadable without the secret key. Test a live browser simulation below:
+      </p>
+
+      <div class="mt-4 bg-slate-950/90 border border-slate-800 rounded-2xl p-4 space-y-3">
+        <div>
+          <label for="educrypt-input" class="block text-xs text-slate-400 mb-1">Plaintext Message or Image Pixel Matrix</label>
+          <input id="educrypt-input" type="text" value="Hello from VIT Vellore! [IMG_DATA_89x42]" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono" />
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="educrypt-encrypt-btn" type="button" class="flex-1 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition">
+            🔒 Encrypt Payload
+          </button>
+          <button id="educrypt-decrypt-btn" type="button" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold transition">
+            🔓 Decrypt Payload
+          </button>
+        </div>
+        <div>
+          <div class="text-[11px] text-slate-400 mb-1">Output Stream:</div>
+          <div id="educrypt-output" class="p-2.5 rounded-xl bg-slate-900 border border-purple-500/30 font-mono text-xs text-purple-300 break-all">
+            Ready for encryption...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 3: Code2Create P2P Emergency Simulator -->
+    <div id="modal-p2p" class="mission-modal hidden glass-card max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-pink-500/40 relative">
+      <button type="button" class="close-modal-btn absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+      <span class="text-xs font-mono text-pink-400">CODE2CREATE HACKATHON // MESH SIMULATOR</span>
+      <h3 class="text-2xl font-bold text-white mt-1">Emergency P2P Mobile Communication</h3>
+      <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+        During natural calamities when cell towers go offline, this peer-to-peer system relays emergency SOS messages directly from phone to phone. Click below to simulate a multi-hop SOS relay:
+      </p>
+
+      <div class="mt-4 bg-slate-950/90 border border-slate-800 rounded-2xl p-4 space-y-4">
+        <div class="flex items-center justify-between text-center">
+          <div id="node-1" class="p-2.5 rounded-xl bg-slate-900 border border-emerald-500/50 text-xs w-24">
+            <div class="text-lg">📱</div>
+            <div class="font-semibold text-white mt-1">Phone A</div>
+            <div class="text-[10px] text-emerald-400">Sender</div>
+          </div>
+          <div id="hop-1" class="flex-1 h-0.5 bg-slate-700 mx-2 transition-all duration-500"></div>
+          <div id="node-2" class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs w-24 transition-all duration-500">
+            <div class="text-lg">📲</div>
+            <div class="font-semibold text-white mt-1">Phone B</div>
+            <div class="text-[10px] text-slate-400">P2P Relay</div>
+          </div>
+          <div id="hop-2" class="flex-1 h-0.5 bg-slate-700 mx-2 transition-all duration-500"></div>
+          <div id="node-3" class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs w-24 transition-all duration-500">
+            <div class="text-lg">🛟</div>
+            <div class="font-semibold text-white mt-1">Rescue Node</div>
+            <div class="text-[10px] text-slate-400">Receiver</div>
+          </div>
+        </div>
+        <div id="p2p-status" class="text-xs font-mono text-center text-slate-300 bg-slate-900 py-2 rounded-lg">
+          Cellular Tower Status: OFFLINE • P2P Mesh Ready
+        </div>
+        <button id="p2p-trigger-btn" type="button" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white text-xs font-semibold transition">
+          📡 Broadcast Emergency SOS Packet (Zero Cell Signal)
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900/95 border border-cyan-400/50 text-cyan-200 px-4 py-2.5 rounded-2xl shadow-2xl text-xs font-medium"></div>
+
+  <script>
+    (function () {
+      // ==========================================
+      // 1. SCROLL-DRIVEN STARFIELD & SPIRAL GALAXY
+      // ==========================================
+      const canvas = document.getElementById('cosmos-canvas');
+      const ctx = canvas.getContext('2d');
+      const galaxyPctEl = document.getElementById('galaxy-pct');
+      const scrollBarEl = document.getElementById('scroll-progress-bar');
+      const densitySlider = document.getElementById('star-density-slider');
+      const boostValEl = document.getElementById('star-boost-val');
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      let scrollProgress = 0; // 0.0 at top -> 1.0 at bottom
+      let targetScroll = 0;
+      let densityMultiplier = 1.0;
+      let galaxyRotation = 0;
+
+      const palettes = {
+        andromeda: {
+          core: 'rgba(224, 242, 254, ',
+          arm1: [34, 211, 238],   // cyan
+          arm2: [168, 85, 247],   // purple
+          arm3: [236, 72, 153],   // pink
+          nebula: 'rgba(88, 28, 135, '
+        },
+        supernova: {
+          core: 'rgba(254, 249, 195, ',
+          arm1: [251, 146, 60],   // orange
+          arm2: [244, 63, 94],    // rose
+          arm3: [234, 179, 8],    // gold
+          nebula: 'rgba(159, 18, 57, '
+        },
+        aurora: {
+          core: 'rgba(209, 250, 229, ',
+          arm1: [52, 211, 153],   // emerald
+          arm2: [56, 189, 248],   // sky
+          arm3: [163, 230, 53],   // lime
+          nebula: 'rgba(6, 95, 70, '
+        }
+      };
+      let activePalette = palettes.andromeda;
+
+      // Ambient background stars (progressively revealed by scroll)
+      const TOTAL_AMBIENT_STARS = 420;
+      const ambientStars = [];
+      for (let i = 0; i < TOTAL_AMBIENT_STARS; i++) {
+        ambientStars.push({
+          x: Math.random(),
+          y: Math.random(),
+          size: Math.random() * 1.8 + 0.4,
+          twinkleSpeed: Math.random() * 0.03 + 0.01,
+          twinklePhase: Math.random() * Math.PI * 2,
+          revealThreshold: Math.pow(i / TOTAL_AMBIENT_STARS, 1.15) // First ~12% visible at top, rest appear as user scrolls
+        });
+      }
+
+      // Spiral Galaxy particles (converge & brighten as user scrolls down)
+      const TOTAL_GALAXY_STARS = 650;
+      const galaxyStars = [];
+      const ARMS = 3;
+      for (let i = 0; i < TOTAL_GALAXY_STARS; i++) {
+        const armIndex = i % ARMS;
+        const distRatio = Math.pow(Math.random(), 0.75); // 0 (center) to 1 (outer edge)
+        const baseAngle = (armIndex * ((Math.PI * 2) / ARMS)) + (distRatio * 4.5) + ((Math.random() - 0.5) * 0.65);
+        // Scattered position when scroll is at top
+        const scatterAngle = Math.random() * Math.PI * 2;
+        const scatterDist = 0.4 + Math.random() * 0.8;
+
+        galaxyStars.push({
+          distRatio,
+          baseAngle,
+          scatterAngle,
+          scatterDist,
+          size: (1 - distRatio * 0.6) * 2.2 + 0.5,
+          armIndex,
+          revealAt: Math.max(0.05, distRatio * 0.85)
+        });
+      }
+
+      // Shooting stars / meteors
+      const meteors = [];
+      function spawnMeteor() {
+        meteors.push({
+          x: Math.random() * width * 0.9,
+          y: Math.random() * height * 0.4,
+          vx: 9 + Math.random() * 6,
+          vy: 4 + Math.random() * 4,
+          len: 70 + Math.random() * 50,
+          alpha: 1.0
+        });
+      }
+
+      function updateScrollMetric() {
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        targetScroll = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+      }
+      window.addEventListener('scroll', updateScrollMetric, { passive: true });
+      window.addEventListener('resize', () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        updateScrollMetric();
+      });
+      updateScrollMetric();
+
+      function renderCosmos() {
+        // Smooth interpolation for silky scroll response
+        scrollProgress += (targetScroll - scrollProgress) * 0.08;
+        galaxyRotation += 0.0018 + scrollProgress * 0.0025;
+
+        // Update HUD percentage
+        const displayPct = Math.round(5 + scrollProgress * 95);
+        if (galaxyPctEl) galaxyPctEl.textContent = displayPct + '%';
+        if (scrollBarEl) scrollBarEl.style.width = Math.max(2, scrollProgress * 100) + '%';
+
+        // Clear deep space background
+        ctx.fillStyle = '#020308';
+        ctx.fillRect(0, 0, width, height);
+
+        const cx = width * 0.5;
+        const cy = height * 0.52;
+        const maxGalaxyRadius = Math.min(width, height) * 0.44;
+
+        // 1. Draw Ambient Stars (more appear as scrollProgress increases)
+        const effectiveStarReveal = Math.min(1, (0.08 + scrollProgress * 0.92) * densityMultiplier);
+        for (let i = 0; i < ambientStars.length; i++) {
+          const st = ambientStars[i];
+          if (st.revealThreshold <= effectiveStarReveal) {
+            const fadeIn = Math.min(1, (effectiveStarReveal - st.revealThreshold) * 5);
+            st.twinklePhase += st.twinkleSpeed;
+            const twinkle = 0.55 + 0.45 * Math.sin(st.twinklePhase);
+            ctx.fillStyle = `rgba(241, 245, 249, ${fadeIn * twinkle * 0.85})`;
+            ctx.beginPath();
+            ctx.arc(st.x * width, st.y * height, st.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // 2. Draw Forming Galaxy Nebula & Spiral Arms based on scrollProgress
+        if (scrollProgress > 0.03) {
+          const galaxyAlpha = Math.min(1, (scrollProgress - 0.03) / 0.85);
+
+          // Soft cosmic glow at core
+          const coreGrad = ctx.createRadialGradient(cx, cy, 4, cx, cy, maxGalaxyRadius * (0.4 + 0.6 * galaxyAlpha));
+          coreGrad.addColorStop(0, activePalette.core + (0.42 * galaxyAlpha) + ')');
+          coreGrad.addColorStop(0.35, activePalette.nebula + (0.24 * galaxyAlpha) + ')');
+          coreGrad.addColorStop(1, 'rgba(2, 3, 8, 0)');
+          ctx.fillStyle = coreGrad;
+          ctx.beginPath();
+          ctx.arc(cx, cy, maxGalaxyRadius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Spiral Galaxy Stars converging into spinning arms as user scrolls
+          const activeCount = Math.min(galaxyStars.length, Math.floor(galaxyStars.length * Math.min(1, galaxyAlpha * densityMultiplier)));
+          for (let i = 0; i < activeCount; i++) {
+            const gs = galaxyStars[i];
+            // Interpolate from wide scattered position to tight spiral arm position as scroll increases
+            const formationFactor = Math.min(1, Math.pow(galaxyAlpha, 0.85));
+            const spiralRadius = gs.distRatio * maxGalaxyRadius;
+            const scatteredRadius = gs.scatterDist * Math.max(width, height) * 0.6;
+            const currentRadius = scatteredRadius * (1 - formationFactor) + spiralRadius * formationFactor;
+
+            const currentAngle = gs.baseAngle + galaxyRotation * (1.4 - gs.distRatio * 0.5);
+            // Slight elliptical tilt for 3D depth
+            const gx = cx + Math.cos(currentAngle) * currentRadius;
+            const gy = cy + Math.sin(currentAngle) * currentRadius * 0.68;
+
+            const rgb = gs.armIndex === 0 ? activePalette.arm1 : (gs.armIndex === 1 ? activePalette.arm2 : activePalette.arm3);
+            const starAlpha = Math.min(1, galaxyAlpha * (1.1 - gs.distRatio * 0.5));
+            ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${starAlpha})`;
+            ctx.beginPath();
+            ctx.arc(gx, gy, gs.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // 3. Render Meteors
+        for (let i = meteors.length - 1; i >= 0; i--) {
+          const m = meteors[i];
+          m.x += m.vx;
+          m.y += m.vy;
+          m.alpha -= 0.018;
+          if (m.alpha <= 0) {
+            meteors.splice(i, 1);
+            continue;
+          }
+          const grad = ctx.createLinearGradient(m.x, m.y, m.x - m.vx * 5, m.y - m.vy * 5);
+          grad.addColorStop(0, `rgba(103, 232, 249, ${m.alpha})`);
+          grad.addColorStop(1, 'rgba(103, 232, 249, 0)');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(m.x, m.y);
+          ctx.lineTo(m.x - m.vx * 5, m.y - m.vy * 5);
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(renderCosmos);
+      }
+      requestAnimationFrame(renderCosmos);
+
+      // Meteor Shower Button
+      const warpBtn = document.getElementById('warp-speed-btn');
+      if (warpBtn) {
+        warpBtn.addEventListener('click', () => {
+          for (let i = 0; i < 7; i++) {
+            setTimeout(spawnMeteor, i * 140);
+          }
+          showToast('☄️ Meteor shower incoming across the cosmos!');
+        });
+      }
+
+      // Galaxy Theme Buttons
+      const themeBtns = document.querySelectorAll('.galaxy-theme-btn');
+      themeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const theme = btn.getAttribute('data-theme');
+          if (palettes[theme]) {
+            activePalette = palettes[theme];
+            themeBtns.forEach(b => {
+              b.className = 'galaxy-theme-btn px-2.5 py-2 rounded-lg text-xs font-medium bg-slate-900 border border-slate-700 text-slate-300 transition';
+            });
+            btn.className = 'galaxy-theme-btn px-2.5 py-2 rounded-lg text-xs font-medium bg-cyan-500/20 border border-cyan-400 text-cyan-200 transition';
+            showToast(`🌌 Switched galaxy spectrum to ${theme.charAt(0).toUpperCase() + theme.slice(1)}!`);
+          }
+        });
+      });
+
+      // Star Density Slider
+      if (densitySlider) {
+        densitySlider.addEventListener('input', (e) => {
+          densityMultiplier = parseFloat(e.target.value);
+          if (boostValEl) boostValEl.textContent = densityMultiplier.toFixed(1) + 'x';
+        });
+      }
+
+      // ==========================================
+      // 2. PEEKING TINY ALIENS INTERACTIVITY
+      // ==========================================
+      const aliens = [
+        { el: document.getElementById('alien-1'), bubble: document.getElementById('alien-bubble-1'), name: 'Zorp' },
+        { el: document.getElementById('alien-2'), bubble: document.getElementById('alien-bubble-2'), name: 'Nebuli' },
+        { el: document.getElementById('alien-3'), bubble: document.getElementById('alien-bubble-3'), name: 'Quasar' }
+      ];
+      let alienScore = 0;
+      const alienScoreEl = document.getElementById('alien-score');
+      const summonAlienBtn = document.getElementById('summon-alien-btn');
+
+      function peekRandomAlien() {
+        const pick = aliens[Math.floor(Math.random() * aliens.length)];
+        if (!pick || !pick.el) return;
+        pick.el.classList.add('peeking');
+        setTimeout(() => {
+          pick.el.classList.remove('peeking');
+          if (pick.bubble) pick.bubble.classList.add('hidden');
+        }, 4200);
+      }
+
+      // Peek an alien every 5.5 seconds or when scrolling
+      setInterval(peekRandomAlien, 5500);
+      setTimeout(peekRandomAlien, 1500);
+
+      aliens.forEach(item => {
+        if (!item.el) return;
+        item.el.addEventListener('click', () => {
+          alienScore += 1;
+          if (alienScoreEl) alienScoreEl.textContent = String(alienScore);
+          if (item.bubble) item.bubble.classList.remove('hidden');
+          spawnMeteor();
+          showToast(`👽 You spotted ${item.name}! (+1 Cosmic Discovery)`);
+          setTimeout(() => {
+            item.el.classList.remove('peeking');
+            if (item.bubble) item.bubble.classList.add('hidden');
+          }, 1800);
+        });
+      });
+
+      if (summonAlienBtn) {
+        summonAlienBtn.addEventListener('click', () => {
+          aliens.forEach(a => a.el && a.el.classList.add('peeking'));
+          showToast('🛸 All 3 tiny aliens are peeking out from the edges! Click them!');
+          setTimeout(() => {
+            aliens.forEach(a => a.el && a.el.classList.remove('peeking'));
+          }, 5000);
+        });
+      }
+
+      // ==========================================
+      // 3. ACCOMPLISHMENTS FILTER & INTERACTIVE MODALS
+      // ==========================================
+      const filterBtns = document.querySelectorAll('.mission-filter-btn');
+      const missionCards = document.querySelectorAll('.mission-card');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-filter');
+          filterBtns.forEach(b => {
+            b.className = 'mission-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-cyan-400 transition';
+          });
+          btn.className = 'mission-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-cyan-500 text-slate-950 transition';
+
+          missionCards.forEach(card => {
+            const cat = card.getAttribute('data-category');
+            if (filter === 'all' || cat === filter) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Modals
+      const backdrop = document.getElementById('modal-backdrop');
+      const openModalBtns = document.querySelectorAll('.open-modal-btn');
+      const closeModalBtns = document.querySelectorAll('.close-modal-btn');
+      const allModals = document.querySelectorAll('.mission-modal');
+
+      function closeAllModals() {
+        allModals.forEach(m => m.classList.add('hidden'));
+        if (backdrop) {
+          backdrop.classList.add('hidden');
+          backdrop.classList.remove('flex');
+        }
+      }
+
+      openModalBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-modal');
+          const targetModal = document.getElementById(targetId);
+          if (targetModal && backdrop) {
+            allModals.forEach(m => m.classList.add('hidden'));
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('flex');
+            targetModal.classList.remove('hidden');
+          }
+        });
+      });
+
+      closeModalBtns.forEach(btn => btn.addEventListener('click', closeAllModals));
+      if (backdrop) {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) closeAllModals();
+        });
+      }
+
+      // EduCrypt Interactive Simulator inside Modal 2
+      const educryptInput = document.getElementById('educrypt-input');
+      const educryptOutput = document.getElementById('educrypt-output');
+      const encryptBtn = document.getElementById('educrypt-encrypt-btn');
+      const decryptBtn = document.getElementById('educrypt-decrypt-btn');
+      let lastPlaintext = 'Hello from VIT Vellore! [IMG_DATA_89x42]';
+
+      if (encryptBtn && educryptInput && educryptOutput) {
+        encryptBtn.addEventListener('click', () => {
+          lastPlaintext = educryptInput.value || 'Secret Message';
+          const encoded = btoa(unescape(encodeURIComponent(lastPlaintext)))
+            .split('')
+            .reverse()
+            .join('');
+          educryptOutput.textContent = 'EDUCRYPT_CIPHER::' + encoded + '::SHA256_OK';
+        });
+      }
+      if (decryptBtn && educryptOutput) {
+        decryptBtn.addEventListener('click', () => {
+          educryptOutput.textContent = 'DECRYPTED_PAYLOAD:: ' + lastPlaintext;
+        });
+      }
+
+      // Code2Create P2P Mesh Simulator inside Modal 3
+      const p2pBtn = document.getElementById('p2p-trigger-btn');
+      const hop1 = document.getElementById('hop-1');
+      const hop2 = document.getElementById('hop-2');
+      const node2 = document.getElementById('node-2');
+      const node3 = document.getElementById('node-3');
+      const p2pStatus = document.getElementById('p2p-status');
+
+      if (p2pBtn) {
+        p2pBtn.addEventListener('click', () => {
+          p2pStatus.textContent = 'Broadcasting SOS packet via Wi-Fi Direct / BLE Mesh...';
+          hop1.className = 'flex-1 h-1 bg-cyan-400 mx-2 transition-all duration-500';
+          setTimeout(() => {
+            node2.className = 'p-2.5 rounded-xl bg-slate-900 border border-cyan-400 text-xs w-24 transition-all duration-500';
+            p2pStatus.textContent = 'Phone B received SOS! Relaying to Rescue Node...';
+            hop2.className = 'flex-1 h-1 bg-pink-400 mx-2 transition-all duration-500';
+          }, 600);
+          setTimeout(() => {
+            node3.className = 'p-2.5 rounded-xl bg-slate-900 border border-emerald-400 text-xs w-24 transition-all duration-500';
+            p2pStatus.textContent = '✅ Emergency SOS delivered to Rescue Node without cellular network!';
+          }, 1300);
+        });
+      }
+
+      // ==========================================
+      // 4. CONTACT HELPERS & TOAST
+      // ==========================================
+      const copyEmailBtn = document.getElementById('copy-email-btn');
+      const contactForm = document.getElementById('contact-form');
+      const formFeedback = document.getElementById('form-feedback');
+      const toastEl = document.getElementById('toast');
+      let toastTimer = null;
+
+      function showToast(msg) {
+        if (!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.remove('hidden');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.add('hidden');
+        }, 3200);
+      }
+
+      if (copyEmailBtn) {
+        copyEmailBtn.addEventListener('click', () => {
+          const email = 'niranjanaraja2008@gmail.com';
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(email).catch(() => {});
+          } else {
+            const temp = document.createElement('textarea');
+            temp.value = email;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+          }
+          copyEmailBtn.textContent = 'Copied! ✓';
+          showToast('📋 Email address copied: niranjanaraja2008@gmail.com');
+          setTimeout(() => {
+            copyEmailBtn.textContent = 'Copy Email';
+          }, 2200);
+        });
+      }
+
+      if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('sender-name').value;
+          if (formFeedback) {
+            formFeedback.textContent = `Thanks, ${name}! Your transmission is ready—click "Send Email" on the left or deploy on Netlify to receive form submissions automatically.`;
+            formFeedback.classList.remove('hidden');
+          }
+          showToast('🚀 Transmission logged!');
+          contactForm.reset();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
